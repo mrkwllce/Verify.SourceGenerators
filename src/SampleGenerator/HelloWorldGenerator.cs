@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 [Generator]
@@ -7,6 +7,7 @@ public class HelloWorldGenerator :
 {
     public void Execute(GeneratorExecutionContext context)
     {
+        var random = new Random();
         var source = @"using System;
 public static class HelloWorld
 {
@@ -15,7 +16,26 @@ public static class HelloWorld
         Console.WriteLine(""Hello from generated code!"");
     }
 }";
-        context.AddSource("helloWorldGenerator", SourceText.From(source, Encoding.UTF8));
+
+        var source2 = @"using System;
+public static class HelloWorld2
+{
+    public static void SayHello2()
+    {
+        Console.WriteLine(""Hello from generated other code!"");
+    }
+}";
+
+        if (random.Next() % 2 == 0)
+        {
+            context.AddSource("helloWorldGenerator2", SourceText.From(source2, Encoding.UTF8));
+            context.AddSource("helloWorldGenerator", SourceText.From(source, Encoding.UTF8));
+        }
+        else
+        {
+            context.AddSource("helloWorldGenerator", SourceText.From(source, Encoding.UTF8));
+            context.AddSource("helloWorldGenerator2", SourceText.From(source2, Encoding.UTF8));
+        }
 
         var descriptor = new DiagnosticDescriptor(
             id: "theId",
